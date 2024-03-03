@@ -1,0 +1,31 @@
+services:
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    container_name: zipkin-server
+    restart: unless-stopped
+    expose:
+      - '9411'
+    ports:
+      - '9411:9411'
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    container_name: pgadmin4_container
+    environment:
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+      - ./docker_pgadmin_servers.json:/pgadmin4/servers.json
+    ports:
+      - "${PGADMIN_LISTEN_PORT:-5050}:80"
+    entrypoint:
+      - "/bin/sh"
+      - "-c"
+      - "/bin/echo 'postgres:5432:*:postgres:password' > /tmp/pgpassfile && chmod 600 /tmp/pgpassfile && /entrypoint.sh"
+
+volumes:
+  pgadmin:

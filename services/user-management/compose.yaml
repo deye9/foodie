@@ -1,0 +1,27 @@
+include:
+  - path:
+      - ../../compose.yaml
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:16-alpine
+    user: postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=usersdb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    expose:
+      - ${POSTGRES_PORT:-5432}
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ["CMD", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
