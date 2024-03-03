@@ -16,7 +16,7 @@ public class UserController {
 
     @GetMapping("/users")
     public String getUsers() {
-        
+    
         logger.info("UserController.getUsers() called with users: " + users);
 
         return "users";

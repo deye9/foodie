@@ -1,4 +1,4 @@
-# foodie
+# Foodie
 
 Multi Tenant Meal Ordering System
 
