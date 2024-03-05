@@ -25,8 +25,8 @@ public class ApiGatewayConfiguration {
                 .route(r -> r.path("/api/v1/payment/**")
                         .filters(f -> f.rewritePath("/api/v1/payment/(?<segment>.*)", "/${segment}"))
                         .uri("lb://payment-service"))
-                .route(r -> r.path("/api/v1/user/**")
-                        .filters(f -> f.rewritePath("/api/v1/user/(?<segment>.*)", "/${segment}"))
+                .route(r -> r.path("/api/v1/users/**")
+                        .filters(f -> f.rewritePath("/api/v1/users/(?<segment>.*)", "/${segment}"))
                         .uri("lb://user-service"))
                 .build();
     }
