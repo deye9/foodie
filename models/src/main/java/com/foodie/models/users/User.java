@@ -1,10 +1,8 @@
 package com.foodie.models.users;
 
 import com.foodie.models.enums.Role;
-import com.foodie.models.enums.TokenType;
 
 import java.util.List;
-import java.io.Serializable;
 import java.util.Collection;
 
 import jakarta.persistence.Id;
@@ -15,14 +13,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 
-import org.springframework.stereotype.Service;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import lombok.Data;
 import lombok.Builder;
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 

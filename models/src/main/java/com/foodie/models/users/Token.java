@@ -1,7 +1,6 @@
 package com.foodie.models.users;
     
 import com.foodie.models.enums.TokenType;
-import com.foodie.models.users.User;
 
 import jakarta.persistence.Id;
 import jakarta.persistence.Column;
@@ -15,7 +14,6 @@ import jakarta.persistence.GeneratedValue;
 
 import lombok.Data;
 import lombok.Builder;
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 

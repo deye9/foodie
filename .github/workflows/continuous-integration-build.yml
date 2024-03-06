@@ -9,7 +9,7 @@ jobs:
 
     strategy:
       matrix:
-        java: [17, 21]
+        java: [17]
 
     steps:
       - name: Checkout repository
@@ -21,9 +21,30 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: maven
+            
+      - name: Build the jar file for the models folder
+        run: ls | grep .java | xargs -I {} javac {} ; jar -cf models-0.0.1.jar models/src/main/java/com/foodie/models/
+        
+      - name: Build and install the models folder to the local repository
+        run: ./mvnw install:install-file -Dfile=models.0.0.1.jar -DgroupId=com.foodie -DartifactId=models -Dversion=0.0.1 -Dpackaging=jar
 
-      - name: Install Maven dependencies
-        run: mvn install
+      - name: Build the jar file for the libraries folder
+        run: ls | grep .java | xargs -I {} javac {} ; jar -cf libraries.jar libraries/src/main/java/com/foodie/library/
+        
+      - name: Build and install the libraries folder to the local repository
+        run: ./mvnw install:install-file -Dfile=libraries.jar -DgroupId=com.foodie -DartifactId=libraries -Dversion=0.0.1 -Dpackaging=jar
+
+      - name: Install Maven dependencies per subModule
+        run: ./mvnw clean install -DskipTests
+        
+        # run: |
+        #   for service in $(find ./services -type d); do
+        #     if [[ -f "$service/pom.xml" ]]; then
+        #       cd "$service"
+        #       ./mvnw clean install -DskipTests
+        #       cd -
+        #     fi
+        #   done
 
       - name: Build Initial with Maven
         working-directory: ./app

@@ -3,8 +3,9 @@ package com.foodie.library.config;
 import com.foodie.library.repositories.UserRepository;
 import com.foodie.library.config.auditing.ApplicationAuditAware;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -21,7 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
-  private final UserRepository repository;
+  @Autowired
+  private UserRepository repository;
 
   @Bean
   public UserDetailsService userDetailsService() {
