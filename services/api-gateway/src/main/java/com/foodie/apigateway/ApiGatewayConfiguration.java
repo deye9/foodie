@@ -7,27 +7,20 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ApiGatewayConfiguration {
-    
-    @Bean
-    public RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
-        return builder.routes()
-                .route(r -> r.path("/get")
-                        .uri("http://httpbin.org:80"))
-                .route(r -> r.path("/api/v1/foodie/**")
-                        .filters(f -> f.rewritePath("/api/v1/foodie/(?<segment>.*)", "/${segment}"))
-                        .uri("lb://foodie-service"))
-                .route(r -> r.path("/api/v1/auth/**")
-                        .filters(f -> f.rewritePath("/api/v1/auth/(?<segment>.*)", "/${segment}"))
-                        .uri("lb://auth-service"))
-                .route(r -> r.path("/api/v1/order/**")
-                        .filters(f -> f.rewritePath("/api/v1/order/(?<segment>.*)", "/${segment}"))
-                        .uri("lb://order-service"))
-                .route(r -> r.path("/api/v1/payment/**")
-                        .filters(f -> f.rewritePath("/api/v1/payment/(?<segment>.*)", "/${segment}"))
-                        .uri("lb://payment-service"))
-                .route(r -> r.path("/api/v1/user/**")
-                        .filters(f -> f.rewritePath("/api/v1/user/(?<segment>.*)", "/${segment}"))
-                        .uri("lb://user-service"))
-                .build();
-    }
+
+        @Bean
+        RouteLocator gatewayRoutes(RouteLocatorBuilder builder) {
+                return builder.routes()
+                                .route(r -> r.path("/get")
+                                                .uri("http://httpbin.org:80"))
+                                .route(r -> r.path("/api/v1/auth/**")
+                                                .uri("lb://svc-user-management"))
+                                .route(r -> r.path("/api/v1/user/**")
+                                                .uri("lb://svc-user-management"))
+                                .route(r -> r.path("/api/v1/order/**")
+                                                .filters(f -> f.rewritePath("/api/v1/order/(?<segment>.*)",
+                                                                "/${segment}"))
+                                                .uri("lb://order-service"))
+                                .build();
+        }
 }
