@@ -42,6 +42,7 @@ public class User implements UserDetails {
   private String lastname;
 
   @NotBlank(message = "Email is mandatory")
+  @Column(name = "email", nullable = false, unique = true)
   private String email;
 
   @JsonIgnore

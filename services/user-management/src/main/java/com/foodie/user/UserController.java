@@ -1,4 +1,4 @@
-package com.foodie.user.usermanagement;
+package com.foodie.user;
 
 import org.springframework.web.bind.annotation.RestController;
 

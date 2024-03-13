@@ -19,7 +19,9 @@ for module in "${modules[@]}"; do
     if [[ "$module" == "models" || "$module" == "libraries" ]]; then
         echo "Running $module in $module_dir..."
 
-        osascript -e "tell application \"Terminal\" to activate do script \"echo -n -e $module; /$PWD/mvnw clean install -f $PWD/$module/pom.xml; exit\"";
+        osascript -e "tell application \"Terminal\" to activate do script \"echo -n -e $module; /$PWD/mvnw clean install -f $PWD/$module/pom.xml\"";
+
+        sleep 10
         continue
     fi
 

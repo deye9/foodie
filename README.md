@@ -3,8 +3,13 @@
 Multi Tenant Meal Ordering System
 
 To run all serivces as needed use the following command in the terminal
+    ./RunApplication.sh
 
-./RunApplication.sh
+When running any service as a standalone service. You need to CD into the service folder and run
+    ./mvnw clean install -DskipTests && ./mvnw spring-boot:run
+
+To run tests for any service as a standalone service. You need to CD into the service folder and run
+    ./mvnw test
 
 The naming server / service registry microservice uses EuerkaServer and basically runs first and allows for service discovery. All microservices built must register with the service registry once it powers up.
 
