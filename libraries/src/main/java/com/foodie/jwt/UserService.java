@@ -30,9 +30,7 @@ public class UserService {
         List<Role> roles = roleRepository.findAll();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-        roles.forEach(role -> {
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName().toUpperCase()));
-        });
+        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName().toUpperCase())));
 
         return authorities;
     }

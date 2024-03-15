@@ -46,7 +46,7 @@ class AuthenticationControllerTest {
         request = new RegisterRequest(faker.name().firstName(), faker.name().lastName(),
                 faker.internet().emailAddress(), faker.internet().password());
 
-        user = new User(null, request.firstname(), request.lastname(), request.email(), request.password(), null, null, null, null);
+        user = new User(request.firstname(), request.lastname(), request.email(), request.password(), null);
     }
 
     @Test

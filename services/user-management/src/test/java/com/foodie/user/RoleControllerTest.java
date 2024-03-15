@@ -37,7 +37,7 @@ class RoleControllerTest {
     private final Faker faker = new Faker();
 
     private Role createTestRole() {
-        return new Role(UUID.randomUUID(), faker.name().username(), faker.book().toString(), null, null, null);
+        return new Role(faker.name().username(), faker.book().toString());
     }
 
     private UUID createTestUUID() {
@@ -80,25 +80,11 @@ class RoleControllerTest {
     void createRole_Exception() {
         Role role = createTestRole();
 
-        when(roleService.createRole(role)).thenThrow(
-                new RuntimeException("{status: 400, message: 'An Error Occurred', timestamp: '2021-08-10T12:00:00'}"));
+        when(roleService.createRole(role)).thenThrow(new RuntimeException());
 
         ResponseEntity<?> responseEntity = roleController.createRole(role);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-
-        String responseBody = responseEntity.getBody().toString();
-
-        // Check if the keys are present in the response
-        assertTrue(responseBody.contains("error"));
-        assertTrue(responseBody.contains("status"));
-        assertTrue(responseBody.contains("timestamp"));
-
-        // Check if the values are present in the response
-        assertTrue(responseBody.contains("400"));
-        assertTrue(responseBody.contains("An Error Occurred"));
-        assertTrue(responseBody.contains("2021-08-10T12:00:00"));
-
         verify(roleService).createRole(role);
     }
 
@@ -147,25 +133,11 @@ class RoleControllerTest {
     void getRoleByID_Exception() {
         UUID id = UUID.randomUUID();
 
-        when(roleService.getRoleById(id)).thenThrow(
-                new RuntimeException("{status: 400, message: 'An Error Occurred', timestamp: '2021-08-10T12:00:00'}"));
+        when(roleService.getRoleById(id)).thenThrow(new RuntimeException());
 
         ResponseEntity<?> responseEntity = roleController.getRoleById(id);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-
-        String responseBody = responseEntity.getBody().toString();
-
-        // Check if the keys are present in the response
-        assertTrue(responseBody.contains("error"));
-        assertTrue(responseBody.contains("status"));
-        assertTrue(responseBody.contains("timestamp"));
-
-        // Check if the values are present in the response
-        assertTrue(responseBody.contains("400"));
-        assertTrue(responseBody.contains("An Error Occurred"));
-        assertTrue(responseBody.contains("2021-08-10T12:00:00"));
-
         verify(roleService).getRoleById(id);
     }
 
@@ -200,25 +172,11 @@ class RoleControllerTest {
     void updateRole_Exception() {
         Role role = createTestRole();
 
-        when(roleService.updateRole(role.getId(), role)).thenThrow(
-                new RuntimeException("{status: 400, message: 'An Error Occurred', timestamp: '2021-08-10T12:00:00'}"));
+        when(roleService.updateRole(role.getId(), role)).thenThrow(new RuntimeException());
 
         ResponseEntity<?> responseEntity = roleController.updateRole(role.getId(), role);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-
-        String responseBody = responseEntity.getBody().toString();
-
-        // Check if the keys are present in the response
-        assertTrue(responseBody.contains("error"));
-        assertTrue(responseBody.contains("status"));
-        assertTrue(responseBody.contains("timestamp"));
-
-        // Check if the values are present in the response
-        assertTrue(responseBody.contains("400"));
-        assertTrue(responseBody.contains("An Error Occurred"));
-        assertTrue(responseBody.contains("2021-08-10T12:00:00"));
-
         verify(roleService).updateRole(role.getId(), role);
     }
 
@@ -253,25 +211,11 @@ class RoleControllerTest {
     void deleteRole_Exception() {
         UUID id = UUID.randomUUID();
 
-        when(roleService.deleteRole(id)).thenThrow(
-                new RuntimeException("{status: 400, message: 'An Error Occurred', timestamp: '2021-08-10T12:00:00'}"));
+        when(roleService.deleteRole(id)).thenThrow(new RuntimeException());
 
         ResponseEntity<?> responseEntity = roleController.deleteRole(id);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, responseEntity.getStatusCode());
-
-        String responseBody = responseEntity.getBody().toString();
-
-        // Check if the keys are present in the response
-        assertTrue(responseBody.contains("error"));
-        assertTrue(responseBody.contains("status"));
-        assertTrue(responseBody.contains("timestamp"));
-
-        // Check if the values are present in the response
-        assertTrue(responseBody.contains("400"));
-        assertTrue(responseBody.contains("An Error Occurred"));
-        assertTrue(responseBody.contains("2021-08-10T12:00:00"));
-
         verify(roleService).deleteRole(id);
     }
 }

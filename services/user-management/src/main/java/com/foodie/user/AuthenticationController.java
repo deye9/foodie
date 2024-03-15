@@ -34,7 +34,7 @@ public class AuthenticationController {
     @Autowired
     private final AuthenticationService service;
 
-    private Logger logger = LoggerFactory.getLogger(RoleController.class);
+    private final Logger logger = LoggerFactory.getLogger(RoleController.class);
 
     @PostMapping(path = "/register", produces = "application/json", consumes = "application/json")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterRequest request) {

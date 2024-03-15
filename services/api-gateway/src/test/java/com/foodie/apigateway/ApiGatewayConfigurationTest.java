@@ -24,7 +24,7 @@ public class ApiGatewayConfigurationTest {
     private ApiGatewayConfiguration apiGatewayConfiguration;
 
     @Test
-    public void testGatewayRoutes() {
+    void testGatewayRoutes() {
         when(builder.routes()).thenReturn(routes);
         when(routes.route(any())).thenReturn(routes);
         when(routes.build()).thenReturn(mock(RouteLocator.class));

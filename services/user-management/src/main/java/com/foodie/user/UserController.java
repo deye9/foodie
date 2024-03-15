@@ -27,7 +27,7 @@ public class UserController {
     private User users;    
     private final UserService service;
 
-    private Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @GetMapping()
     public ResponseEntity<String> getUsers() {

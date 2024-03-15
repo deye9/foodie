@@ -23,7 +23,7 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    private Logger logger = LoggerFactory.getLogger(RoleController.class);
+    private final Logger logger = LoggerFactory.getLogger(RoleController.class);
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<?> createRole(@Valid @RequestBody Role role) {

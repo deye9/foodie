@@ -26,6 +26,6 @@ services:
       - "/bin/sh"
       - "-c"
       - "/bin/echo 'postgres:5432:*:postgres:password' > /tmp/pgpassfile && chmod 600 /tmp/pgpassfile && /entrypoint.sh"
-
+    
 volumes:
   pgadmin:

@@ -8,7 +8,7 @@ clear
 modules=($(grep "<module>" pom.xml | sed 's/<module>\(.*\)<\/module>/\1/'))
 
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
-  echo $TERM_PROGRAM "is running the commands via apple terminal"
+  echo "$TERM_PROGRAM" "is running the commands via apple terminal"
 fi
 
 # Loop through the array and run each module

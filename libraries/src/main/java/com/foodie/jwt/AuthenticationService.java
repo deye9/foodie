@@ -52,9 +52,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.password()))
                 .build();
 
-        var savedUser = repository.save(user);
-        
-        return savedUser;
+        return repository.save(user);
     }
 
     private void saveUserToken(User user, String jwtToken) {

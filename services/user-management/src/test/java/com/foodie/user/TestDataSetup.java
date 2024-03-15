@@ -28,6 +28,7 @@ public class TestDataSetup implements BeforeAllCallback, ExtensionContext.Store.
 
     @Override
     public void beforeAll(ExtensionContext context) throws Exception {
+        
         if (started) {
             return;
         }
