@@ -23,4 +23,4 @@ jobs:
           cache: maven
             
       - name: Install Maven dependencies per subModule
-        run: ./mvnw clean install -DskipTests
+        run: ./mvnw clean install

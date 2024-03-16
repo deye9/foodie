@@ -8,7 +8,7 @@ clear
 modules=($(grep "<module>" pom.xml | sed 's/<module>\(.*\)<\/module>/\1/'))
 
 if [[ "$TERM_PROGRAM" == "vscode" ]]; then
-  echo $TERM_PROGRAM "is running the commands via apple terminal"
+  echo "$TERM_PROGRAM" "is running the commands via apple terminal"
 fi
 
 # Loop through the array and run each module
@@ -19,7 +19,9 @@ for module in "${modules[@]}"; do
     if [[ "$module" == "models" || "$module" == "libraries" ]]; then
         echo "Running $module in $module_dir..."
 
-        osascript -e "tell application \"Terminal\" to activate do script \"echo -n -e $module; /$PWD/mvnw clean install -f $PWD/$module/pom.xml; exit\"";
+        osascript -e "tell application \"Terminal\" to activate do script \"echo -n -e $module; /$PWD/mvnw clean install -f $PWD/$module/pom.xml\"";
+
+        sleep 10
         continue
     fi
 
