@@ -5,26 +5,21 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import jakarta.persistence.Id;
+
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.foodie.FoodieBaseModel;
 
 @Getter
 @Setter
@@ -33,31 +28,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class User implements UserDetails {
-  @Id
-  @JsonIgnore
-  @GeneratedValue(strategy = GenerationType.UUID)
-  private UUID id;
+public class User extends FoodieBaseModel implements UserDetails {
+  
   private String firstname;
   private String lastname;
 
   @NotBlank(message = "Email is mandatory")
+  @Column(name = "email", nullable = false, unique = true)
   private String email;
 
   @JsonIgnore
   @NotBlank(message = "Password is mandatory")
   private String password;
-
-  @Column(name = "created_at")
-  private LocalDateTime createdAt;
-
-  @JsonIgnore
-  @Column(name = "updated_at")
-  private LocalDateTime updatedAt;
-
-  @JsonIgnore
-  @Column(insertable = false, columnDefinition = "TIMESTAMP", name = "deleted_at")
-  private LocalDateTime deletedAt;
 
   @JsonIgnore
   @OneToMany(mappedBy = "user")
@@ -99,13 +81,4 @@ public class User implements UserDetails {
     return true;
   }
 
-  @PrePersist
-  protected void onCreate() {
-    createdAt = LocalDateTime.now();
-  }
-
-  @PreUpdate
-  protected void onUpdate() {
-    updatedAt = LocalDateTime.now();
-  }
 }

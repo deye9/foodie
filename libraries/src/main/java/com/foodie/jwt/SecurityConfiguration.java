@@ -21,7 +21,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 
@@ -46,13 +45,13 @@ public class SecurityConfiguration {
         };
         private final LogoutHandler logoutHandler;
         private final JwtAuthenticationFilter jwtAuthFilter;
-        private String ApplicationPath = "/api/v1/management/**";
         private final AuthenticationProvider authenticationProvider;
         private @Autowired PermissionRepository permissionRepository;
+        private final String ApplicationPath = "/api/v1/management/**";
 
         public String[] getAllPermissionNames() {
                 List<Permission> permissions = permissionRepository.findAll();
-                if (permissions.size() == 0) {
+                if (permissions.isEmpty()) {
                         return new String[] { "ADMIN", "USER", "MANAGER", "RIDER", "FOODIE" };
                 } else {
                         List<String> permissionNames = new ArrayList<>();
