@@ -30,6 +30,7 @@ build/
 
 ### VS Code ###
 .vscode/
+.DS_STORE
 
 # Compiled class file
 *.class
