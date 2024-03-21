@@ -1,0 +1,17 @@
+{"properties": [
+  {
+    "name": "spring.kafka.reset-config",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.kafka.reset-config'"
+  },
+  {
+    "name": "spring.kafka.group-id-config",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.kafka.group-id-config'"
+  },
+  {
+    "name": "spring.kafka.trusted-packages",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.kafka.trusted-packages'"
+  }
+]}

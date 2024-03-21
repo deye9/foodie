@@ -1,4 +1,4 @@
-package com.foodie.user.jwt;
+package com.foodie.user.service;
 
 import java.io.IOException;
 
@@ -10,13 +10,14 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.foodie.enums.TokenType;
+import com.foodie.user.contracts.AuthenticationRequest;
+import com.foodie.user.contracts.AuthenticationResponse;
+import com.foodie.user.contracts.RegisterRequest;
+import com.foodie.user.jwt.JwtService;
 import com.foodie.user.model.Token;
 import com.foodie.user.model.User;
-import com.foodie.user.model.contracts.AuthenticationRequest;
-import com.foodie.user.model.contracts.AuthenticationResponse;
-import com.foodie.user.model.contracts.RegisterRequest;
-import com.foodie.user.model.repositories.TokenRepository;
-import com.foodie.user.model.repositories.UserRepository;
+import com.foodie.user.repositories.TokenRepository;
+import com.foodie.user.repositories.UserRepository;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

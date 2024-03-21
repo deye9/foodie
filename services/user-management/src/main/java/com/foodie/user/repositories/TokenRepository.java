@@ -1,4 +1,4 @@
-package com.foodie.user.model.repositories;
+package com.foodie.user.repositories;
 
 import java.util.List;
 import java.util.Optional;

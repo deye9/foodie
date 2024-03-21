@@ -1,4 +1,4 @@
-package com.foodie.user.model.contracts;
+package com.foodie.user.contracts;
 
 import java.util.Objects;
 

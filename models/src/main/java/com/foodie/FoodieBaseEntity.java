@@ -24,6 +24,6 @@ public abstract class FoodieBaseEntity {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(insertable = false, columnDefinition = "TIMESTAMP", name = "deleted_at")
+    @Column(insertable = false, nullable = true, name = "deleted_at")
     private LocalDateTime deletedAt;
 }

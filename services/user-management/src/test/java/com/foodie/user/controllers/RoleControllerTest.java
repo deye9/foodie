@@ -2,12 +2,15 @@ package com.foodie.user.controllers;
 
 import com.foodie.FoodieBaseResponse;
 import com.foodie.user.model.Role;
-import com.foodie.user.model.service.RoleService;
+import com.foodie.user.service.RoleService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +20,8 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith({ TestSetupPostgres.class })
 public class RoleControllerTest {
 
     @Mock
@@ -32,15 +37,14 @@ public class RoleControllerTest {
 
     @Test
     void testCreateRole_Success() {
-        Role role = new Role();
-
+        Role role = new Role();        
         when(roleService.save(role)).thenReturn(role); // mock the role service save method
 
         ResponseEntity<FoodieBaseResponse> responseEntity = roleController.createRole(role);
 
         verify(roleService).save(role);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).getdata());
+        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).data());
     }
 
     @Test
@@ -53,7 +57,7 @@ public class RoleControllerTest {
 
         verify(roleService).findByIdAndDeletedAtIsNull(id);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).getdata());
+       assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).data());
     }
 
     @Test
@@ -65,7 +69,7 @@ public class RoleControllerTest {
 
         verify(roleService).findByIdAndDeletedAtIsNull(id);
         assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
-        assertEquals("Role not found", Objects.requireNonNull(responseEntity.getBody()).getdata());
+       assertEquals("Role not found", Objects.requireNonNull(responseEntity.getBody()).data());
     }
 
     @Test
@@ -77,7 +81,7 @@ public class RoleControllerTest {
 
         verify(roleService).findAllByDeletedAtIsNull(0, 10, "id");
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(roles.getContent(), Objects.requireNonNull(responseEntity.getBody()).getdata());
+       assertEquals(roles.getContent(), Objects.requireNonNull(responseEntity.getBody()).data());
     }
 
     @Test
@@ -90,7 +94,7 @@ public class RoleControllerTest {
 
         verify(roleService).updateById(role, id);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).getdata());
+       assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).data());
     }
 
     @Test
@@ -101,7 +105,7 @@ public class RoleControllerTest {
 
         verify(roleService).deleteById(id);
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
-        assertEquals("", Objects.requireNonNull(responseEntity.getBody()).getdata());
+       assertEquals("", Objects.requireNonNull(responseEntity.getBody()).data());
     }
 
 }
