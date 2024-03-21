@@ -6,7 +6,7 @@ import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-import com.foodie.enums.ResponseKeys;
+import com.foodie.FoodieBaseResponse;
 import com.foodie.user.TestDataSetup;
 import com.foodie.user.jwt.AuthenticationService;
 import com.foodie.user.model.User;
@@ -27,7 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-import java.util.Collections;
+import java.util.Objects;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith({ TestDataSetup.class })
@@ -61,11 +61,11 @@ class AuthenticationControllerTest {
 
         when(authenticationService.register(request)).thenReturn(user);
 
-        ResponseEntity<?> responseEntity = authenticationController.registerUser(request);
+        ResponseEntity<FoodieBaseResponse> responseEntity = authenticationController.registerUser(request);
 
-        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals(Collections.singletonMap(ResponseKeys.DATA.toString(), user), responseEntity.getBody());
         verify(authenticationService).register(request);
+        assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
+        assertEquals(user, Objects.requireNonNull(responseEntity.getBody()).getdata());
     }
 
     @Test
@@ -76,11 +76,11 @@ class AuthenticationControllerTest {
 
         when(authenticationService.authenticate(authRequest)).thenReturn(authResponse);
 
-        ResponseEntity<?> responseEntity = authenticationController.authenticateUser(authRequest);
+        ResponseEntity<FoodieBaseResponse> responseEntity = authenticationController.authenticateUser(authRequest);
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(Collections.singletonMap(ResponseKeys.DATA.toString(), authResponse), responseEntity.getBody());
         verify(authenticationService).authenticate(authRequest);
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        assertEquals(authResponse, Objects.requireNonNull(responseEntity.getBody()).getdata());
     }
 
     @Test

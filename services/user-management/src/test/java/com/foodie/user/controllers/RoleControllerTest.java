@@ -1,6 +1,6 @@
 package com.foodie.user.controllers;
 
-import com.foodie.enums.ResponseKeys;
+import com.foodie.FoodieBaseResponse;
 import com.foodie.user.model.Role;
 import com.foodie.user.model.service.RoleService;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,83 +26,82 @@ public class RoleControllerTest {
     private RoleController roleController;
 
     @BeforeEach
-     void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-     void testCreateRole_Success() {
+    void testCreateRole_Success() {
         Role role = new Role();
 
         when(roleService.save(role)).thenReturn(role); // mock the role service save method
 
-        ResponseEntity<Map<String, ?>> responseEntity = roleController.createRole(role);
+        ResponseEntity<FoodieBaseResponse> responseEntity = roleController.createRole(role);
 
         verify(roleService).save(role);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).get(ResponseKeys.DATA.toString()));
+        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).getdata());
     }
 
     @Test
-     void testGetRoleById() {
+    void testGetRoleById() {
         UUID id = UUID.randomUUID();
         Role role = new Role();
         when(roleService.findByIdAndDeletedAtIsNull(id)).thenReturn(Optional.of(role));
 
-        ResponseEntity<Map<String, ?>> responseEntity = roleController.getRoleById(id);
+        ResponseEntity<FoodieBaseResponse> responseEntity = roleController.getRoleById(id);
 
         verify(roleService).findByIdAndDeletedAtIsNull(id);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).get(ResponseKeys.DATA.toString()));
+        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).getdata());
     }
 
     @Test
-     void testGetRoleByID_NotFound() {
+    void testGetRoleByID_NotFound() {
         UUID id = UUID.randomUUID();
         when(roleService.findByIdAndDeletedAtIsNull(id)).thenReturn(Optional.empty());
 
-        ResponseEntity<Map<String, ?>> response = roleController.getRoleById(id);
+        ResponseEntity<FoodieBaseResponse> responseEntity = roleController.getRoleById(id);
 
         verify(roleService).findByIdAndDeletedAtIsNull(id);
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Role not found", response.getBody().get(ResponseKeys.DATA.toString()));
+        assertEquals(HttpStatus.NOT_FOUND, responseEntity.getStatusCode());
+        assertEquals("Role not found", Objects.requireNonNull(responseEntity.getBody()).getdata());
     }
 
     @Test
-     void testGetAllRoles_Success() {
+    void testGetAllRoles_Success() {
         Page<Role> roles = mock(Page.class); // mock the Page object
         when(roleService.findAllByDeletedAtIsNull(0, 10, "id")).thenReturn(roles); // mock the role service method
 
-        ResponseEntity<Map<String, List<Role>>> responseEntity = roleController.getAllRoles(0, 10, "id");
+        ResponseEntity<FoodieBaseResponse> responseEntity = roleController.getAllRoles(0, 10, "id");
 
         verify(roleService).findAllByDeletedAtIsNull(0, 10, "id");
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(roles.getContent(),
-                Objects.requireNonNull(responseEntity.getBody()).get(ResponseKeys.DATA.toString()));
+        assertEquals(roles.getContent(), Objects.requireNonNull(responseEntity.getBody()).getdata());
     }
 
     @Test
-     void testUpdateRole_Success() {
+    void testUpdateRole_Success() {
         UUID id = UUID.randomUUID();
         Role role = new Role();
         when(roleService.updateById(role, id)).thenReturn(role);
 
-        ResponseEntity<Map<String, ?>> responseEntity = roleController.updateRole(id, role);
+        ResponseEntity<FoodieBaseResponse> responseEntity = roleController.updateRole(id, role);
 
         verify(roleService).updateById(role, id);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).get(ResponseKeys.DATA.toString()));
+        assertEquals(role, Objects.requireNonNull(responseEntity.getBody()).getdata());
     }
 
     @Test
-     void testDeleteRole_Success() {
+    void testDeleteRole_Success() {
         UUID id = UUID.randomUUID();
 
-        ResponseEntity<Map<String, String>> responseEntity = roleController.deleteRole(id);
+        ResponseEntity<FoodieBaseResponse> responseEntity = roleController.deleteRole(id);
 
         verify(roleService).deleteById(id);
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
-        assertEquals("", Objects.requireNonNull(responseEntity.getBody()).get(ResponseKeys.DATA.toString()));
+        assertEquals("", Objects.requireNonNull(responseEntity.getBody()).getdata());
     }
 
 }

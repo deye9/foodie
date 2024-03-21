@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import com.foodie.ErrorMessageResponse;
+import com.foodie.FoodieBaseErrorResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,7 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AppExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = { Exception.class })
-    public ResponseEntity<ErrorMessageResponse> handleAnyException(Exception ex, WebRequest request) {
+    public ResponseEntity<FoodieBaseErrorResponse> handleAnyException(Exception ex, WebRequest request) {
 
         log.error("Handling exception: {}", ex.getMessage());
 
@@ -33,7 +33,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = { NullPointerException.class })
-    public ResponseEntity<ErrorMessageResponse> handleNullPointerException(NullPointerException ex, WebRequest request) {
+    public ResponseEntity<FoodieBaseErrorResponse> handleNullPointerException(NullPointerException ex, WebRequest request) {
 
         log.error("Null Pointer exception thrown: {}", ex.getMessage());
 
@@ -46,7 +46,7 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(value = { DataIntegrityViolationException.class })
-    public ResponseEntity<ErrorMessageResponse> handleDataIntegrityValidationException(DataIntegrityViolationException ex, WebRequest request) {
+    public ResponseEntity<FoodieBaseErrorResponse> handleDataIntegrityValidationException(DataIntegrityViolationException ex, WebRequest request) {
 
         log.error("Data Integrity exception thrown: {}", ex.getMessage());
 
@@ -59,8 +59,11 @@ public class AppExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(errorCause);
     }
 
-    private ResponseEntity<ErrorMessageResponse> buildErrorResponse(String errorMessageDescription) {
-        ErrorMessageResponse errorMessage = new ErrorMessageResponse(errorMessageDescription, LocalDateTime.now());
-        return new ResponseEntity<ErrorMessageResponse>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    private ResponseEntity<FoodieBaseErrorResponse> buildErrorResponse(String errorMessageDescription) {
+        FoodieBaseErrorResponse errorMessage = new FoodieBaseErrorResponse(errorMessageDescription, LocalDateTime.now());
+
+        // Push to Kafka
+        
+        return new ResponseEntity<FoodieBaseErrorResponse>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

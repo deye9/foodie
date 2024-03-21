@@ -10,7 +10,5 @@ import com.foodie.user.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
-
   Optional<User> findByEmail(String email);
-
 }
