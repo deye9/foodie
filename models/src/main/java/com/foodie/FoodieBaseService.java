@@ -1,34 +1,89 @@
 package com.foodie;
 
-import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.util.Streamable;
 
-/**
- * The FoodieBaseService interface provides methods for performing CRUD operations on entities that extend the FoodieBaseEntity class.
- *
- * @param <T>  the type of the entity
- * @param <ID> the type of the entity's ID
- */
-public interface FoodieBaseService<T extends FoodieBaseEntity, ID extends Serializable> {
+public interface FoodieBaseService<T extends FoodieBaseEntity, ID> {
 
-    T save(T entity);
+    FoodieBaseRepository<T, ID> getRepository();
 
-    List<T> findAll();
+    default T save(T entity) {
+        return getRepository().save(entity);
+    }
 
-    Optional<T> findById(ID entityId);
+    default List<T> findAll() {
+        return getRepository().findAll();
+    }
 
-    T update(T entity);
+    default Optional<T> findById(ID id) {
+        return getRepository().findById(id);
+    }
 
-    T updateById(T entity, ID entityId);
+    @SuppressWarnings("unchecked")
+    default T update(T entity) {
+        entity.setUpdatedAt(LocalDateTime.now());
 
-    void delete(T entity);
+        return getRepository().findById((ID) entity.getId())
+                .map(existingEntity -> getRepository().save(entity))
+                .orElse(null);
+    }
 
-    void deleteById(ID entityId);
+    default T updateById(T entity, ID id) {
+        entity.setUpdatedAt(LocalDateTime.now());
 
-    Optional<T> findByIdAndDeletedAtIsNull(ID entityId);
+        return getRepository().findById(id)
+                .map(existingEntity -> getRepository().save(entity))
+                .orElse(null);
+    }
 
-    Page<T> findAllByDeletedAtIsNull(int page, int size, String sort);
+    @SuppressWarnings("unchecked")
+    default void delete(T entity) {
+        getRepository().findById((ID) entity.getId())
+                .ifPresent(existingEntity -> {
+                    existingEntity.setDeletedAt(LocalDateTime.now());
+                    getRepository().save(existingEntity);
+                });
+    }
+
+    default void deleteById(ID id) {
+        getRepository().findById(id)
+                .ifPresent(entity -> {
+                    entity.setDeletedAt(LocalDateTime.now());
+                    getRepository().save(entity);
+                });
+    }
+
+    default void hardDelete(T entity) {
+        getRepository().delete(entity);
+    }
+
+    default void hardDeleteById(ID id) {
+        getRepository().deleteById(id);
+    }
+
+    default Optional<T> findByIdAndDeletedAtIsNull(ID id) {
+        return getRepository().findById(id)
+                .filter(entity -> entity.getDeletedAt() == null);
+    }
+
+    default Page<T> findAllByDeletedAtIsNull(int page, int size, String sort) {
+        if (page < 0 || size <= 0 || sort == null) {
+            throw new IllegalArgumentException("Page, size, and sort parameters are invalid");
+        }
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+        Streamable<T> lazyStreamable = getRepository().findAll(pageable)
+                .filter(entity -> entity.getDeletedAt() == null);
+
+        List<T> content = lazyStreamable.toList();
+        return new PageImpl<>(content, pageable, content.size());
+    }
 }

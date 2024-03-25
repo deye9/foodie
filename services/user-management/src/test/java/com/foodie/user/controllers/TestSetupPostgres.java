@@ -1,4 +1,4 @@
-package com.foodie.user;
+package com.foodie.user.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,7 +15,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-public class TestDataSetup implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
+public class TestSetupPostgres implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
   
     private static boolean started = false;
 
@@ -42,7 +42,7 @@ public class TestDataSetup implements BeforeAllCallback, ExtensionContext.Store.
         System.setProperty("spring.datasource.password", postgresContainer.getPassword());
 
         // Store this instance in the global context store
-        context.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).put("TestDataSetup", this);
+        context.getRoot().getStore(ExtensionContext.Namespace.GLOBAL).put("TestSetupPostgres", this);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class TestDataSetup implements BeforeAllCallback, ExtensionContext.Store.
         assertEquals(1, result);
     }
 
-    private ResultSet performQuery(PostgreSQLContainer postgres, String query) throws SQLException {
+    private ResultSet performQuery(PostgreSQLContainer<?> postgres, String query) throws SQLException {
         // Connect to the PostgreSQL container and execute the query
         String jdbcUrl = postgres.getJdbcUrl();
         String username = postgres.getUsername();

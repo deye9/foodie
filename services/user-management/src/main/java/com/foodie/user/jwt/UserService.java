@@ -7,11 +7,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.foodie.user.contracts.ChangePasswordRequest;
 import com.foodie.user.model.Role;
 import com.foodie.user.model.User;
-import com.foodie.user.model.contracts.ChangePasswordRequest;
-import com.foodie.user.model.repositories.RoleRepository;
-import com.foodie.user.model.repositories.UserRepository;
+import com.foodie.user.repositories.RoleRepository;
+import com.foodie.user.repositories.UserRepository;
 
 import java.security.Principal;
 import java.util.ArrayList;

@@ -3,16 +3,15 @@ package com.foodie.user.controllers;
 import com.foodie.FoodieBaseResponse;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.foodie.user.jwt.AuthenticationService;
+import com.foodie.user.contracts.AuthenticationRequest;
+import com.foodie.user.contracts.AuthenticationResponse;
+import com.foodie.user.contracts.RegisterRequest;
 import com.foodie.user.model.User;
-import com.foodie.user.model.contracts.AuthenticationRequest;
-import com.foodie.user.model.contracts.AuthenticationResponse;
-import com.foodie.user.model.contracts.RegisterRequest;
+import com.foodie.user.service.AuthenticationService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,11 +25,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/auth")
 public class AuthenticationController {
 
-    private final AuthenticationService service;
+    private AuthenticationService service;
+
+    public AuthenticationController(AuthenticationService service) {
+        this.service = service;
+    }
 
     @PostMapping(path = "/register", produces = "application/json", consumes = "application/json")
     public ResponseEntity<FoodieBaseResponse> registerUser(@Valid @RequestBody RegisterRequest request) {

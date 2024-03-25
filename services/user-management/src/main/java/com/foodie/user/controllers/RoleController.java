@@ -7,10 +7,9 @@ import org.springframework.web.bind.annotation.*;
 
 import com.foodie.FoodieBaseResponse;
 import com.foodie.user.model.Role;
-import com.foodie.user.model.service.RoleService;
+import com.foodie.user.service.RoleService;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -20,11 +19,14 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @CrossOrigin
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/users/roles")
 public class RoleController {
 
-    private final RoleService roleService;
+    private RoleService roleService;
+
+    public RoleController(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<FoodieBaseResponse> createRole(@Valid @RequestBody Role role) {
@@ -53,7 +55,8 @@ public class RoleController {
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sort) {
 
-        log.info("Fetching all roles with page={}, size={}, sort={}", page, size, sort);
+        log.info("Fetching all roles with page={}, size={}, sort={}", page, size,
+                sort);
 
         Page<Role> roles = roleService.findAllByDeletedAtIsNull(page, size, sort);
         List<Role> roleList = roles.getContent();

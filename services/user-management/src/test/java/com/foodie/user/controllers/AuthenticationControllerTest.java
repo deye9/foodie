@@ -7,18 +7,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import com.foodie.FoodieBaseResponse;
-import com.foodie.user.TestDataSetup;
-import com.foodie.user.jwt.AuthenticationService;
+import com.foodie.user.contracts.AuthenticationRequest;
+import com.foodie.user.contracts.AuthenticationResponse;
+import com.foodie.user.contracts.RegisterRequest;
 import com.foodie.user.model.User;
-import com.foodie.user.model.contracts.AuthenticationRequest;
-import com.foodie.user.model.contracts.AuthenticationResponse;
-import com.foodie.user.model.contracts.RegisterRequest;
+import com.foodie.user.service.AuthenticationService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 import java.util.Objects;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith({ TestDataSetup.class })
+@ExtendWith({ TestSetupPostgres.class })
 class AuthenticationControllerTest {
 
     @InjectMocks
@@ -44,6 +44,7 @@ class AuthenticationControllerTest {
     
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this); // Initialize the mocks
         Faker faker = new Faker();
         request = new RegisterRequest(faker.name().firstName(), faker.name().lastName(),
                 faker.internet().emailAddress(), faker.internet().password());
@@ -65,7 +66,7 @@ class AuthenticationControllerTest {
 
         verify(authenticationService).register(request);
         assertEquals(HttpStatus.CREATED, responseEntity.getStatusCode());
-        assertEquals(user, Objects.requireNonNull(responseEntity.getBody()).getdata());
+       assertEquals(user, Objects.requireNonNull(responseEntity.getBody()).data());
     }
 
     @Test
@@ -80,7 +81,7 @@ class AuthenticationControllerTest {
 
         verify(authenticationService).authenticate(authRequest);
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals(authResponse, Objects.requireNonNull(responseEntity.getBody()).getdata());
+       assertEquals(authResponse, Objects.requireNonNull(responseEntity.getBody()).data());
     }
 
     @Test

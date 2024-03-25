@@ -11,7 +11,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.foodie.user.model.repositories.TokenRepository;
+import com.foodie.user.repositories.TokenRepository;
 
 import io.jsonwebtoken.security.InvalidKeyException;
 import jakarta.servlet.FilterChain;

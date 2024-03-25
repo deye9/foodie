@@ -14,7 +14,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.foodie.user.model.repositories.UserRepository;
+import com.foodie.user.repositories.UserRepository;
 
 @Configuration
 public class ApplicationConfig {

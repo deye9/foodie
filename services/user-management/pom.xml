@@ -29,6 +29,8 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
 		</dependency>
+
+		<!-- Internal dependencies -->
 		<dependency>
 			<groupId>com.foodie</groupId>
 			<artifactId>models</artifactId>
@@ -38,6 +40,23 @@
 			<groupId>com.foodie</groupId>
 			<artifactId>libraries</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+
+		<!-- JSON Web Token -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>0.11.5</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>0.11.5</version>
 		</dependency>
 		<!-- <dependency>
 			<groupId>org.springframework.cloud</groupId>
