@@ -12,7 +12,6 @@ import com.foodie.user.service.RoleService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,7 +21,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/users/roles")
 public class RoleController {
 
-    private RoleService roleService;
+    private final RoleService roleService;
 
     public RoleController(RoleService roleService) {
         this.roleService = roleService;
@@ -30,6 +29,9 @@ public class RoleController {
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<FoodieBaseResponse> createRole(@Valid @RequestBody Role role) {
+        if (role == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new FoodieBaseResponse("Role cannot be null"));
+        }
 
         log.info("Creating role: {}", role);
 
@@ -59,8 +61,7 @@ public class RoleController {
                 sort);
 
         Page<Role> roles = roleService.findAllByDeletedAtIsNull(page, size, sort);
-        List<Role> roleList = roles.getContent();
-        return ResponseEntity.ok().body(new FoodieBaseResponse(roleList));
+        return ResponseEntity.ok().body(new FoodieBaseResponse(roles.getContent()));
     }
 
     @PutMapping(path = "/{id}", produces = "application/json")

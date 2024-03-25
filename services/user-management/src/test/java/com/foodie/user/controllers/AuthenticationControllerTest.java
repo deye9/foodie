@@ -33,18 +33,16 @@ import java.util.Objects;
 @ExtendWith({ TestSetupPostgres.class })
 class AuthenticationControllerTest {
 
-    @InjectMocks
-    private AuthenticationController authenticationController;
-
-    @Mock
-    private AuthenticationService authenticationService;
-
     private User user;
     private RegisterRequest request;
-    
+    private AuthenticationService authenticationService;
+    private AuthenticationController authenticationController;
+ 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Initialize the mocks
+        authenticationService = mock(AuthenticationService.class);
+        authenticationController = new AuthenticationController(authenticationService);
+
         Faker faker = new Faker();
         request = new RegisterRequest(faker.name().firstName(), faker.name().lastName(),
                 faker.internet().emailAddress(), faker.internet().password());
