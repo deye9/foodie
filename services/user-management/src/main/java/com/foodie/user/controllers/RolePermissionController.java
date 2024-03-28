@@ -6,8 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.foodie.FoodieBaseResponse;
-import com.foodie.user.model.Permission;
-import com.foodie.user.service.PermissionService;
+import com.foodie.user.model.RolePermission;
+import com.foodie.user.service.RolePermissionService;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -18,24 +18,24 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/auth/permissions")
-public class PermissionController {
+@RequestMapping("/api/v1/auth/{role}/permissions")
+public class RolePermissionController {
     
-    private final PermissionService permissionService;
+    private final RolePermissionService rolePermitService;
 
-    public PermissionController(PermissionService permissionService) {
-        this.permissionService = permissionService;
+    public RolePermissionController(RolePermissionService rolePermitService) {
+        this.rolePermitService = rolePermitService;
     }
 
     @PostMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity<FoodieBaseResponse> createPermission(@Valid @RequestBody Permission permission) {
+    public ResponseEntity<FoodieBaseResponse> createPermission(@Valid @RequestBody RolePermission permission) {
         if (permission == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new FoodieBaseResponse("Permission cannot be null"));
         }
 
         log.info("Creating permission: {}", permission);
 
-        Permission createdPermission = permissionService.save(permission);
+        RolePermission createdPermission = rolePermitService.save(permission);
         return ResponseEntity.status(HttpStatus.CREATED).body(new FoodieBaseResponse(createdPermission));
     }
 
@@ -44,7 +44,7 @@ public class PermissionController {
 
         log.info("Fetching permission with ID: {}", id);
 
-        Optional<Permission> permission = permissionService.findByIdAndDeletedAtIsNull(id);
+        Optional<RolePermission> permission = rolePermitService.findByIdAndDeletedAtIsNull(id);
 
         return permission.map(
                 value -> ResponseEntity.ok().body(new FoodieBaseResponse(value)))
@@ -60,16 +60,16 @@ public class PermissionController {
         log.info("Fetching all permissions with page={}, size={}, sort={}", page, size,
                 sort);
 
-        Page<Permission> permissions = permissionService.findAllByDeletedAtIsNull(page, size, sort);
+        Page<RolePermission> permissions = rolePermitService.findAllByDeletedAtIsNull(page, size, sort);
         return ResponseEntity.ok().body(new FoodieBaseResponse(permissions.getContent()));
     }
 
     @PutMapping(path = "/{id}", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<FoodieBaseResponse> updatePermission(@Valid @PathVariable("id") UUID id, @RequestBody Permission permission) {
+    public ResponseEntity<FoodieBaseResponse> updatePermission(@Valid @PathVariable("id") UUID id, @RequestBody RolePermission permission) {
 
         log.info("Updating permission with ID: {}", id);
 
-        Permission updatedPermission = permissionService.updateById(permission, id);
+        RolePermission updatedPermission = rolePermitService.updateById(permission, id);
         return ResponseEntity.ok().body(new FoodieBaseResponse(updatedPermission));
     }
 
@@ -78,7 +78,7 @@ public class PermissionController {
 
         log.info("Deleting permission with ID: {}", id);
 
-        permissionService.deleteById(id);
+        rolePermitService.deleteById(id);
         return ResponseEntity.accepted().body(new FoodieBaseResponse(""));
     }
 

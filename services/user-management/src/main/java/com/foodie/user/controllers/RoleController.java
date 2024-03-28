@@ -18,7 +18,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/users/roles")
+@RequestMapping("/api/v1/auth/roles")
 public class RoleController {
 
     private final RoleService roleService;
