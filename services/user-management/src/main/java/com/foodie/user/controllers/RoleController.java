@@ -18,7 +18,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/users/roles")
+@RequestMapping("/api/v1/security/roles")
 public class RoleController {
 
     private final RoleService roleService;
@@ -78,6 +78,13 @@ public class RoleController {
     public ResponseEntity<FoodieBaseResponse> deleteRole(@Valid @PathVariable("id") UUID id) {
 
         log.info("Deleting role with ID: {}", id);
+
+        // Check if the role exists
+        Optional<Role> role = roleService.findByIdAndDeletedAtIsNull(id);
+
+        if (role.isEmpty()) {
+            return ResponseEntity.badRequest().body(new FoodieBaseResponse("Role not found."));
+        }
 
         roleService.deleteById(id);
         return ResponseEntity.accepted().body(new FoodieBaseResponse(""));

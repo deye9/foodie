@@ -23,10 +23,6 @@ public interface FoodieBaseService<T extends FoodieBaseEntity, Key> {
     FoodieBaseRepository<T, Key> getRepository();
     Logger logger = LoggerFactory.getLogger(FoodieBaseService.class);
 
-    default T save(T entity) {
-        return getRepository().save(entity);
-    }
-
     default List<T> findAll() {
         return getRepository().findAll();
     }
@@ -35,9 +31,23 @@ public interface FoodieBaseService<T extends FoodieBaseEntity, Key> {
         return getRepository().findById(id);
     }
 
+    default T save(T entity) {
+        return getRepository().save(entity);
+    }
+
+    default List<T> saveAll(List<T> entity) {
+        return getRepository().saveAll(entity);
+    }
+
     default T update(T entity) {
         entity.setUpdatedAt(LocalDateTime.now());
         return getRepository().save(entity);
+    }
+
+    default List<T> updateAll(List<T> entities) {
+        entities.forEach(entity -> entity.setUpdatedAt(LocalDateTime.now()));
+
+        return getRepository().saveAll(entities);
     }
 
     default T updateById(T entity, Key id) {
@@ -47,6 +57,18 @@ public interface FoodieBaseService<T extends FoodieBaseEntity, Key> {
             retrievedEntity.setUpdatedAt(LocalDateTime.now());
             return getRepository().save(retrievedEntity);
         }).orElse(null);
+    }
+
+    @SuppressWarnings("unchecked")
+    default List<T> updateAllById(List<T> entities) {
+        entities.forEach(entity -> {
+            Optional<T> existingEntity = findByIdAndDeletedAtIsNull((Key) entity.getId());
+            existingEntity.ifPresent(retrievedEntity -> {
+                updateFields(entity, retrievedEntity);
+                retrievedEntity.setUpdatedAt(LocalDateTime.now());
+            });
+        });
+        return getRepository().saveAll(entities);
     }
 
     @SuppressWarnings("unchecked")
@@ -92,6 +114,13 @@ public interface FoodieBaseService<T extends FoodieBaseEntity, Key> {
         return new PageImpl<>(content, pageable, content.size());
     }
 
+    private boolean isFieldIgnored(Field field) {
+        return field.getName().equalsIgnoreCase("id")
+            || field.isAnnotationPresent(JsonIgnore.class)
+            || field.isAnnotationPresent(CreationTimestamp.class)
+            || field.isAnnotationPresent(UpdateTimestamp.class);
+    }
+
     private void updateFields(T sourceEntity, T targetEntity) {
         Class<?> clazz = sourceEntity.getClass();
         Field[] fields = clazz.getDeclaredFields();
@@ -109,12 +138,5 @@ public interface FoodieBaseService<T extends FoodieBaseEntity, Key> {
                 }
             }
         }
-    }
-
-    private boolean isFieldIgnored(Field field) {
-        return field.getName().equals("id") 
-            || field.isAnnotationPresent(JsonIgnore.class)
-            || field.isAnnotationPresent(CreationTimestamp.class)
-            || field.isAnnotationPresent(UpdateTimestamp.class);
     }
 }

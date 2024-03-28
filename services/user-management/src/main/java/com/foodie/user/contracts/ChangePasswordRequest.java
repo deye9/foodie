@@ -1,11 +1,6 @@
 package com.foodie.user.contracts;
 
-import java.util.Objects;
+import jakarta.validation.constraints.NotEmpty;
 
-public record ChangePasswordRequest(String newPassword, String currentPassword, String confirmationPassword) {
-    public ChangePasswordRequest {
-        Objects.requireNonNull(newPassword);
-        Objects.requireNonNull(currentPassword);
-        Objects.requireNonNull(confirmationPassword);
-    }
-}
+public record ChangePasswordRequest(@NotEmpty String newPassword, @NotEmpty String currentPassword,
+        @NotEmpty String confirmationPassword) {}

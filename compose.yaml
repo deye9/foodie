@@ -1,5 +1,4 @@
 services:
-
   kafka:
     image: bitnami/kafka:latest
     hostname: kafka

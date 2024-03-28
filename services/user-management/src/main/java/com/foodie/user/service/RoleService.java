@@ -21,5 +21,5 @@ public class RoleService implements FoodieBaseService<Role, UUID> {
     @Override
     public FoodieBaseRepository<Role, UUID> getRepository() {
         return roleRepository;
-    }    
+    }  
 }
