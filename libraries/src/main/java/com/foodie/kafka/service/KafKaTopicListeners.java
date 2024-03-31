@@ -15,11 +15,11 @@ public class KafKaTopicListeners {
 
     @KafkaListener(topics = "foodie-users", groupId = "foodie-users-group")
     public void listenUsersTopic(Object message) {
-        log.info("Received message in foodie-users: " + message);
+    log.info("Received message in foodie-users: " + message);
     }
 
     @KafkaListener(topics = "foodie-payment", groupId = "foodie-payment-group")
     public void listenPaymentTopic(Object message) {
-        log.info("Received message in foodie-payment: " + message);
+    log.info("Received message in foodie-payment: " + message);
     }
 }

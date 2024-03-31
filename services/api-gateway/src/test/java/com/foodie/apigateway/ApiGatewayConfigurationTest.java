@@ -33,7 +33,7 @@ public class ApiGatewayConfigurationTest {
 
         assertNotNull(result);
         verify(builder).routes();
-        verify(routes, times(4)).route(any());
+        verify(routes, times(5)).route(any());
         verify(routes).build();
     }
 }

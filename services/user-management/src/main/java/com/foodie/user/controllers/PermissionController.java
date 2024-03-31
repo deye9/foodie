@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.foodie.FoodieBaseResponse;
 import com.foodie.user.model.Permission;
+import com.foodie.user.model.Role;
 import com.foodie.user.service.PermissionService;
 
 import jakarta.validation.Valid;
@@ -18,9 +19,9 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @CrossOrigin
-@RequestMapping("/api/v1/users/permissions")
+@RequestMapping("/api/v1/security/permissions")
 public class PermissionController {
-    
+
     private final PermissionService permissionService;
 
     public PermissionController(PermissionService permissionService) {
@@ -30,7 +31,8 @@ public class PermissionController {
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<FoodieBaseResponse> createPermission(@Valid @RequestBody Permission permission) {
         if (permission == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new FoodieBaseResponse("Permission cannot be null"));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new FoodieBaseResponse("Permission cannot be null"));
         }
 
         log.info("Creating permission: {}", permission);
@@ -65,7 +67,8 @@ public class PermissionController {
     }
 
     @PutMapping(path = "/{id}", produces = "application/json", consumes = "application/json")
-    public ResponseEntity<FoodieBaseResponse> updatePermission(@Valid @PathVariable("id") UUID id, @RequestBody Permission permission) {
+    public ResponseEntity<FoodieBaseResponse> updatePermission(@Valid @PathVariable("id") UUID id,
+            @Valid @RequestBody Permission permission) {
 
         log.info("Updating permission with ID: {}", id);
 
@@ -77,6 +80,13 @@ public class PermissionController {
     public ResponseEntity<FoodieBaseResponse> deletePermission(@Valid @PathVariable("id") UUID id) {
 
         log.info("Deleting permission with ID: {}", id);
+
+        // Check if the permission exists
+        Optional<Permission> permission = permissionService.findByIdAndDeletedAtIsNull(id);
+
+        if (permission.isEmpty()) {
+            return ResponseEntity.badRequest().body(new FoodieBaseResponse("Permission not found"));
+        }
 
         permissionService.deleteById(id);
         return ResponseEntity.accepted().body(new FoodieBaseResponse(""));

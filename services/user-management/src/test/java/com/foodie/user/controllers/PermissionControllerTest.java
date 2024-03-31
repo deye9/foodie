@@ -105,8 +105,21 @@ class PermissionControllerTest {
     }
 
     @Test
-    void deletePermission_ValidPermission_ReturnsAcceptedResponse() {
+    void deletePermission_NonExistingId_ReturnsBadRequestResponse() {
         UUID permissionId = UUID.randomUUID();
+        when(permissionService.findByIdAndDeletedAtIsNull(permissionId)).thenReturn(Optional.empty());
+
+        ResponseEntity<FoodieBaseResponse> response = permissionController.deletePermission(permissionId);
+
+        assertNotNull(response.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Permission not found", response.getBody().data());
+    }
+
+    @Test
+    void deletePermission_ExistingId_ReturnsAcceptedResponse() {
+        UUID permissionId = UUID.randomUUID();
+        when(permissionService.findByIdAndDeletedAtIsNull(permissionId)).thenReturn(Optional.of(new Permission()));
 
         ResponseEntity<FoodieBaseResponse> response = permissionController.deletePermission(permissionId);
 

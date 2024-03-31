@@ -1,10 +1,6 @@
 package com.foodie.user.contracts;
 
-import java.util.Objects;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotEmpty;
 
-public record AuthenticationRequest(String email, String password) {
-  public AuthenticationRequest {
-        Objects.requireNonNull(email);
-        Objects.requireNonNull(password);
-    }
-}
+public record AuthenticationRequest(@Email String email, @NotEmpty String password) {}

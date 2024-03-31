@@ -1,12 +1,7 @@
 package com.foodie.user.contracts;
 
-import java.util.Objects;
+import jakarta.validation.constraints.NotEmpty;
 
-public record RegisterRequest(String firstname, String lastname, String email, String password) {
-  public RegisterRequest {
-        Objects.requireNonNull(firstname);
-        Objects.requireNonNull(lastname);
-        Objects.requireNonNull(email);
-        Objects.requireNonNull(password);
-    }
+public record RegisterRequest(@NotEmpty String firstname, @NotEmpty String lastname, @NotEmpty String email,
+    @NotEmpty String password) {
 }

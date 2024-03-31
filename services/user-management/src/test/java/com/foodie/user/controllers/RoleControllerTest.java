@@ -108,14 +108,28 @@ class RoleControllerTest {
     }
  
     @Test
-    void deleteRole_Success() {
+    void deleteRole_NonExistingId_ReturnsBadRequestResponse() {
         UUID id = UUID.randomUUID();
+        when(roleService.findByIdAndDeletedAtIsNull(id)).thenReturn(Optional.empty());
+
+        ResponseEntity<FoodieBaseResponse> responseEntity = roleController.deleteRole(id);
+
+        verify(roleService, never()).deleteById(id);
+        assertNotNull(responseEntity.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+        assertEquals("Role not found.", responseEntity.getBody().data());
+    }
+
+    @Test
+    void deleteRole_ExistingId_ReturnsAcceptedResponse() {
+        UUID id = UUID.randomUUID();
+        when(roleService.findByIdAndDeletedAtIsNull(id)).thenReturn(Optional.of(new Role()));
 
         ResponseEntity<FoodieBaseResponse> responseEntity = roleController.deleteRole(id);
 
         verify(roleService).deleteById(id);
+        assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
-        assertEquals("", Objects.requireNonNull(responseEntity.getBody()).data());
+        assertEquals("", responseEntity.getBody().data());
     }
-
 }
