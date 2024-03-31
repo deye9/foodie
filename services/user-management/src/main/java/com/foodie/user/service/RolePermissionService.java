@@ -1,6 +1,8 @@
 package com.foodie.user.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -27,10 +29,15 @@ public class RolePermissionService implements FoodieBaseService<RolePermission, 
     }
 
     public void deleteAllByRoleId(UUID roleId) {
-        rolePermissionRepository.findAllByRoleIdAndDeletedAtIsNull(roleId, Pageable.unpaged()).forEach(rolePermission -> {
-            rolePermission.setDeletedAt(LocalDateTime.now());
-            rolePermissionRepository.save(rolePermission);
-        });
+        rolePermissionRepository.findAllByRoleIdAndDeletedAtIsNull(roleId, Pageable.unpaged())
+                .forEach(rolePermission -> {
+                    rolePermission.setDeletedAt(LocalDateTime.now());
+                    rolePermissionRepository.save(rolePermission);
+                });
+    }
+
+    public Optional<List<RolePermission>> findAllByRoleIdAndDeletedAtIsNull(UUID id) {
+        return rolePermissionRepository.findAllByRoleIdAndDeletedAtIsNull(id);
     }
 
     public Page<RolePermission> findAllByRoleIdAndDeletedAtIsNull(UUID id, Pageable pageable) {

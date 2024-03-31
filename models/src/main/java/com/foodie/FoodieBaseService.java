@@ -71,13 +71,9 @@ public interface FoodieBaseService<T extends FoodieBaseEntity, Key> {
         return getRepository().saveAll(entities);
     }
 
-    @SuppressWarnings("unchecked")
     default void delete(T entity) {
-        getRepository().findById((Key) entity.getId())
-                .ifPresent(existingEntity -> {
-                    existingEntity.setDeletedAt(LocalDateTime.now());
-                    getRepository().save(existingEntity);
-                });
+        entity.setDeletedAt(LocalDateTime.now());
+        getRepository().save(entity);
     }
 
     default void deleteById(Key id) {

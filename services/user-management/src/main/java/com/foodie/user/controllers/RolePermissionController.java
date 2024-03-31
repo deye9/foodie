@@ -1,7 +1,6 @@
 package com.foodie.user.controllers;
 
 import com.foodie.FoodieBaseResponse;
-import com.foodie.user.contracts.PermissionRequest;
 import com.foodie.user.contracts.RolePermitRequest;
 import com.foodie.user.model.Permission;
 import com.foodie.user.model.Role;
@@ -19,7 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -38,14 +40,6 @@ public class RolePermissionController {
         this.rolePermissionService = rolePermissionService;
     }
 
-    private Role validateAndGetRole(UUID roleId) {
-        return roleService.findByIdAndDeletedAtIsNull(roleId).orElse(null);
-    }
-
-    private Permission validateAndGetPermission(UUID permitId) {
-        return permissionService.findByIdAndDeletedAtIsNull(permitId).orElse(null);
-    }
-
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<FoodieBaseResponse> createRolePermission(@Valid @PathVariable("role") UUID roleId,
             @Valid @RequestBody String[] permissionIds) {
@@ -54,7 +48,7 @@ public class RolePermissionController {
             return ResponseEntity.badRequest().body(new FoodieBaseResponse("Permission cannot be null"));
         }
 
-        Role role = validateAndGetRole(roleId);
+        Role role = roleService.validateAndGetRole(roleId);
         if (role == null) {
             return ResponseEntity.badRequest().body(new FoodieBaseResponse("Role not found."));
         }
@@ -62,7 +56,7 @@ public class RolePermissionController {
         List<RolePermission> rolePermissions = new ArrayList<>();
 
         for (String permitId : permissionIds) {
-            Permission permission = validateAndGetPermission(UUID.fromString(permitId));
+            Permission permission = permissionService.validateAndGetPermission(UUID.fromString(permitId));
             if (permission == null) {
                 return ResponseEntity.badRequest().body(new FoodieBaseResponse("Permission not found."));
             }
@@ -70,8 +64,8 @@ public class RolePermissionController {
         }
 
         log.info("Creating Role permissions");
-        List<RolePermission> createdPermissions = rolePermissionService.saveAll(rolePermissions);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new FoodieBaseResponse(createdPermissions));
+        List<RolePermission> createdEntity = rolePermissionService.saveAll(rolePermissions);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new FoodieBaseResponse(createdEntity));
     }
 
     @GetMapping(path = "/{id}", produces = "application/json")
@@ -79,9 +73,9 @@ public class RolePermissionController {
 
         log.info("Fetching Role permission with ID: {}", id);
 
-        Optional<RolePermission> permission = rolePermissionService.findByIdAndDeletedAtIsNull(id);
+        Optional<RolePermission> retrievedEntity = rolePermissionService.findByIdAndDeletedAtIsNull(id);
 
-        return permission.map(value -> ResponseEntity.ok().body(new FoodieBaseResponse(value)))
+        return retrievedEntity.map(value -> ResponseEntity.ok().body(new FoodieBaseResponse(value)))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
@@ -94,30 +88,31 @@ public class RolePermissionController {
         log.info("Fetching all Role {} permissions with page={}, size={}, sort={}", roleId, page, size, sort);
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
-        Page<RolePermission> permissions = rolePermissionService.findAllByRoleIdAndDeletedAtIsNull(roleId, pageable);
-        return ResponseEntity.ok().body(new FoodieBaseResponse(permissions.getContent()));
+        Page<RolePermission> retrievedEntities = rolePermissionService.findAllByRoleIdAndDeletedAtIsNull(roleId,
+                pageable);
+        return ResponseEntity.ok().body(new FoodieBaseResponse(retrievedEntities.getContent()));
     }
 
     @PutMapping(path = "/{id}", produces = "application/json", consumes = "application/json")
     public ResponseEntity<FoodieBaseResponse> patchRolePermission(@Valid @PathVariable("role") UUID roleId,
             @Valid @PathVariable("id") UUID id,
-            @Valid @RequestBody PermissionRequest permission) {
+            @Valid @RequestBody Permission permission) {
 
         log.info("Updating Role {}'s Permission(s)", roleId);
 
-        Role role = validateAndGetRole(roleId);
+        Role role = roleService.validateAndGetRole(roleId);
         if (role == null) {
             return ResponseEntity.badRequest().body(new FoodieBaseResponse("Role not found."));
         }
 
-        Permission permissionEntity = validateAndGetPermission(UUID.fromString(permission.id()));
+        Permission permissionEntity = permissionService.validateAndGetPermission(permission.getId());
         if (permissionEntity == null) {
             return ResponseEntity.badRequest().body(new FoodieBaseResponse("Permission not found."));
         }
 
-        RolePermission updatedPermission = rolePermissionService.updateById(new RolePermission(role, permissionEntity),
+        RolePermission updatedEntity = rolePermissionService.updateById(new RolePermission(role, permissionEntity),
                 id);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new FoodieBaseResponse(updatedPermission));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new FoodieBaseResponse(updatedEntity));
     }
 
     @PutMapping(produces = "application/json", consumes = "application/json")
@@ -128,13 +123,13 @@ public class RolePermissionController {
 
         List<RolePermission> rolePermissions = new ArrayList<>();
 
-        Role role = validateAndGetRole(roleId);
+        Role role = roleService.validateAndGetRole(roleId);
         if (role == null) {
             return ResponseEntity.badRequest().body(new FoodieBaseResponse("Role not found."));
         }
 
         for (RolePermitRequest permit : permissions) {
-            Permission permissionEntity = validateAndGetPermission(UUID.fromString(permit.permission().id()));
+            Permission permissionEntity = permissionService.validateAndGetPermission(permit.permission().getId());
             if (permissionEntity == null) {
                 return ResponseEntity.badRequest().body(new FoodieBaseResponse("Permission not found."));
             }
@@ -145,8 +140,8 @@ public class RolePermissionController {
         }
 
         log.info("Updating Role permissions");
-        List<RolePermission> updatedPermissions = rolePermissionService.updateAll(rolePermissions);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new FoodieBaseResponse(updatedPermissions));
+        List<RolePermission> updatedEntity = rolePermissionService.updateAll(rolePermissions);
+        return ResponseEntity.status(HttpStatus.CREATED).body(new FoodieBaseResponse(updatedEntity));
     }
 
     @DeleteMapping(path = "/{id}", produces = "application/json")
@@ -155,9 +150,9 @@ public class RolePermissionController {
         log.info("Deleting Role permission with ID: {}", id);
 
         // Check if the permission exists
-        Optional<RolePermission> permission = rolePermissionService.findByIdAndDeletedAtIsNull(id);
+        Optional<RolePermission> deletedEntity = rolePermissionService.findByIdAndDeletedAtIsNull(id);
 
-        if (permission.isEmpty()) {
+        if (deletedEntity.isEmpty()) {
             return ResponseEntity.badRequest().body(new FoodieBaseResponse("Permission not found."));
         }
 
@@ -171,13 +166,14 @@ public class RolePermissionController {
         log.info("Deleting permissions for Role: {}", roleId);
 
         // Check if the permission exists
-        Optional<RolePermission> permission = rolePermissionService.findByIdAndDeletedAtIsNull(roleId);
+        Optional<List<RolePermission>> deletedEntity = rolePermissionService.findAllByRoleIdAndDeletedAtIsNull(roleId);
 
-        if (permission.isEmpty()) {
+        if (deletedEntity.isEmpty()) {
             return ResponseEntity.badRequest().body(new FoodieBaseResponse("Permission not found."));
         }
 
-        rolePermissionService.deleteAllByRoleId(roleId);
+        deletedEntity.ifPresent(entity -> entity.forEach(rolePermissionService::delete));
+
         return ResponseEntity.accepted().body(new FoodieBaseResponse(""));
     }
 }

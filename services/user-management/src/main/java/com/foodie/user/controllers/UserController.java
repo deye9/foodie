@@ -3,7 +3,7 @@ package com.foodie.user.controllers;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.foodie.user.contracts.ChangePasswordRequest;
-import com.foodie.user.jwt.UserService;
+import com.foodie.user.service.UserService;
 import com.foodie.user.model.User;
 
 import jakarta.validation.Valid;

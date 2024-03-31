@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 
 import com.foodie.FoodieBaseResponse;
 import com.foodie.user.model.Permission;
-import com.foodie.user.model.Role;
 import com.foodie.user.service.PermissionService;
 
 import jakarta.validation.Valid;
