@@ -21,5 +21,9 @@ public class PermissionService implements FoodieBaseService<Permission, UUID>{
      @Override
     public FoodieBaseRepository<Permission, UUID> getRepository() {
         return permissionRepository;
+    }
+
+    public Permission validateAndGetPermission(UUID permitId) {
+        return findByIdAndDeletedAtIsNull(permitId).orElse(null);
     }    
 }

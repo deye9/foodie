@@ -1,4 +1,4 @@
-package com.foodie.user.jwt;
+package com.foodie.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +17,8 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +27,15 @@ public class UserService {
     private final UserRepository repository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    
+
+    public Optional<User> findByIdAndDeletedAtIsNull(UUID id) {
+        return repository.findByIdAndDeletedAtIsNull(id);
+    }
+
+    public User validateAndGetUser(UUID userId) {
+        return findByIdAndDeletedAtIsNull(userId).orElse(null);
+    }
+
     public Collection<? extends GrantedAuthority> getUserAuthorities(User user) {
         List<Role> roles = roleRepository.findAll();
         List<SimpleGrantedAuthority> authorities = new ArrayList<>();

@@ -21,5 +21,9 @@ public class RoleService implements FoodieBaseService<Role, UUID> {
     @Override
     public FoodieBaseRepository<Role, UUID> getRepository() {
         return roleRepository;
+    }
+
+    public Role validateAndGetRole(UUID roleId) {
+        return findByIdAndDeletedAtIsNull(roleId).orElse(null);
     }  
 }
