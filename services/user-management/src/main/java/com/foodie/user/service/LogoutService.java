@@ -1,4 +1,4 @@
-package com.foodie.user.jwt;
+package com.foodie.user.service;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,17 +19,17 @@ public class LogoutService implements LogoutHandler {
 
   @Override
   public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-    
+
     final String authHeader = request.getHeader("Authorization");
 
-    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-      return;
+    if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+      throw new IllegalArgumentException("Invalid token");
     }
 
     final String jwt = authHeader.substring(7);
     var storedToken = tokenRepository.findByTokenString(jwt)
         .orElse(null);
-        
+
     if (storedToken != null) {
       storedToken.setExpired(true);
       storedToken.setRevoked(true);

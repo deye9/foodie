@@ -15,19 +15,15 @@ import com.foodie.user.service.AuthenticationService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 import java.util.Objects;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith({ TestSetupPostgres.class })
 class AuthenticationControllerTest {
 
     private User user;
@@ -44,7 +40,7 @@ class AuthenticationControllerTest {
         request = new RegisterRequest(faker.name().firstName(), faker.name().lastName(),
                 faker.internet().emailAddress(), faker.internet().password());
 
-        user = new User(request.firstname(), request.lastname(), request.email(), request.password(), null);
+        user = new User(request.firstname(), request.lastname(), request.email(), request.password(), null, null);
     }
 
     @Test

@@ -1,4 +1,4 @@
-package com.foodie.user.jwt;
+package com.foodie.user.service;
 
 import java.security.Key;
 import java.util.Date;

@@ -13,11 +13,11 @@ import com.foodie.enums.TokenType;
 import com.foodie.user.contracts.AuthenticationRequest;
 import com.foodie.user.contracts.AuthenticationResponse;
 import com.foodie.user.contracts.RegisterRequest;
-import com.foodie.user.jwt.JwtService;
 import com.foodie.user.model.Token;
 import com.foodie.user.model.User;
 import com.foodie.user.repositories.TokenRepository;
 import com.foodie.user.repositories.UserRepository;
+import com.foodie.user.utils.FoodieUserDetails;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+
     private final JwtService jwtService;
     private final UserRepository repository;
     private final TokenRepository tokenRepository;
@@ -50,6 +51,7 @@ public class AuthenticationService {
                 .firstname(request.firstname())
                 .lastname(request.lastname())
                 .email(request.email())
+                .isActive(true)
                 .password(passwordEncoder.encode(request.password()))
                 .build();
 
@@ -75,8 +77,13 @@ public class AuthenticationService {
                         request.password()));
         var user = repository.findByEmail(request.email()).orElseThrow();
 
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        if (!user.getIsActive()) {
+            throw new IllegalStateException("User is not active");
+        }
+        FoodieUserDetails userDetails = new FoodieUserDetails(user);
+
+        var jwtToken = jwtService.generateToken(userDetails);
+        var refreshToken = jwtService.generateRefreshToken(userDetails);
 
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
@@ -102,9 +109,10 @@ public class AuthenticationService {
 
         if (userEmail != null) {
             var user = this.repository.findByEmail(userEmail).orElseThrow();
+            FoodieUserDetails userDetails = new FoodieUserDetails(user);
 
-            if (jwtService.isTokenValid(refreshToken, user)) {
-                var accessToken = jwtService.generateToken(user);
+            if (jwtService.isTokenValid(refreshToken, userDetails)) {
+                var accessToken = jwtService.generateToken(userDetails);
                 revokeAllUserTokens(user);
                 saveUserToken(user, accessToken);
                 var authResponse = AuthenticationResponse.builder()
@@ -115,4 +123,5 @@ public class AuthenticationService {
             }
         }
     }
+
 }

@@ -1,4 +1,4 @@
-package com.foodie.user.controllers;
+package com.foodie.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,7 +17,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public class TestSetupPostgres implements BeforeAllCallback, ExtensionContext.Store.CloseableResource {
   
-    private static boolean started = false;
+    private static final boolean started = false;
 
     // Define a PostgreSQL container with specific database name, username, and password
     @Container
@@ -27,7 +27,7 @@ public class TestSetupPostgres implements BeforeAllCallback, ExtensionContext.St
         .withPassword("password");
 
     @Override
-    public void beforeAll(ExtensionContext context) throws Exception {
+    public void beforeAll(ExtensionContext context)  {
         
         if (started) {
             return;
@@ -46,7 +46,7 @@ public class TestSetupPostgres implements BeforeAllCallback, ExtensionContext.St
     }
 
     @Override
-    public void close() throws Throwable {
+    public void close() {
         // Stop the PostgreSQL container after all tests
         postgresContainer.stop();
     }

@@ -33,7 +33,7 @@ public class AuthenticationController {
     public AuthenticationController(AuthenticationService service) {
         this.service = service;
     }
-
+    
     @PostMapping(path = "/register", produces = "application/json", consumes = "application/json")
     public ResponseEntity<FoodieBaseResponse> registerUser(@Valid @RequestBody RegisterRequest request) {
 

@@ -1,53 +1,71 @@
 package com.foodie.user.service;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.foodie.FoodieBaseRepository;
+import com.foodie.FoodieBaseResponse;
+import com.foodie.FoodieBaseService;
 import com.foodie.user.contracts.ChangePasswordRequest;
-import com.foodie.user.model.Role;
 import com.foodie.user.model.User;
-import com.foodie.user.repositories.RoleRepository;
 import com.foodie.user.repositories.UserRepository;
+import com.foodie.user.utils.FoodieUserDetails;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
-public class UserService {
+public class UserService implements FoodieBaseService<User, UUID> {
 
     private final UserRepository repository;
-    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Override
+    public FoodieBaseRepository<User, UUID> getRepository() {
+        return repository;
+    }
+
+    public User validateAndGetUser(Object connectedUser) {
+
+        User retrievedUser;
+        if (connectedUser instanceof Principal) {
+            retrievedUser = ((FoodieUserDetails) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal()).getUser();
+        } else if (connectedUser instanceof UUID) {
+            retrievedUser =  findByIdAndDeletedAtIsNull((UUID) connectedUser).orElse(null);
+        } else {
+            throw new IllegalArgumentException("Invalid connectedUser type");
+        }
+
+        if (retrievedUser == null || !retrievedUser.getIsActive()) {
+            throw new RuntimeException("Requested user not found or not active");
+        }
+
+        return retrievedUser;
+    }
+
+    public void deactivateUser(Object connectedUser) {
+
+        User user = validateAndGetUser(connectedUser);
+        user.setIsActive(false);
+        repository.save(user);
+    }
 
     public Optional<User> findByIdAndDeletedAtIsNull(UUID id) {
         return repository.findByIdAndDeletedAtIsNull(id);
     }
 
-    public User validateAndGetUser(UUID userId) {
-        return findByIdAndDeletedAtIsNull(userId).orElse(null);
-    }
-
-    public Collection<? extends GrantedAuthority> getUserAuthorities(User user) {
-        List<Role> roles = roleRepository.findAll();
-        List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-
-        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName().toUpperCase())));
-
-        return authorities;
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void changePassword(ChangePasswordRequest request, Principal connectedUser) {
 
-        var user = (User) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        User user = ((FoodieUserDetails) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal()).getUser();
 
         // check if the current password is correct
         if (!passwordEncoder.matches(request.currentPassword(), user.getPassword())) {
@@ -64,4 +82,5 @@ public class UserService {
         // save the new password
         repository.save(user);
     }
+
 }
