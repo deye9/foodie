@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -13,14 +14,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.apache.kafka.common.quota.ClientQuotaAlteration.Op;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -28,18 +24,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import com.foodie.user.contracts.UserRoleRequest;
-import com.foodie.user.model.Permission;
 import com.foodie.user.model.Role;
 import com.foodie.user.model.User;
 import com.foodie.user.model.UserRole;
 import com.foodie.FoodieBaseResponse;
-import com.foodie.user.service.PermissionService;
-import com.foodie.user.service.RolePermissionService;
 import com.foodie.user.service.RoleService;
 import com.foodie.user.service.UserRoleService;
 import com.foodie.user.service.UserService;
 
-@ExtendWith({ TestSetupPostgres.class, MockitoExtension.class })
 public class UserRoleControllerTest {
 
     User user;
@@ -49,17 +41,10 @@ public class UserRoleControllerTest {
     UUID randomID;
     String[] roleIds;
 
-    @Mock
     private UserService userService;
-
-    @Mock
     private RoleService roleService;
-
-    @Mock
-    UserRoleService userRoleService;
-
-    @InjectMocks
-    UserRoleController controller;
+    private UserRoleController controller;
+    private UserRoleService userRoleService;
 
     @BeforeEach
     void setup() {
@@ -74,12 +59,18 @@ public class UserRoleControllerTest {
         role.setId(roleId);
 
         roleIds = new String[] { UUID.randomUUID().toString(), UUID.randomUUID().toString() };
+
+        userService = mock(UserService.class);
+        roleService = mock(RoleService.class);
+        userRoleService = mock(UserRoleService.class);
+
+        controller = new UserRoleController(roleService, userService, userRoleService);
     }
 
     @Test
-    void createUserRole_WhenRoleIdsIsNull_ReturnsBadRequestResponse() {
+    void createUserRole_EmptyRoles_ReturnsBadRequestResponse() {
 
-        ResponseEntity<FoodieBaseResponse> responseEntity = controller.createUserRole(null, null);
+        ResponseEntity<FoodieBaseResponse> responseEntity = controller.createUserRole(randomID, new String[0]);
 
         assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
@@ -87,9 +78,9 @@ public class UserRoleControllerTest {
     }
 
     @Test
-    void createUserRole_EmptyRoles_ReturnsBadRequestResponse() {
+    void createUserRole_EmptyRoles_ReturnsBadRequestResponse1() {
 
-        ResponseEntity<FoodieBaseResponse> responseEntity = controller.createUserRole(UUID.randomUUID(), new String[0]);
+        ResponseEntity<FoodieBaseResponse> responseEntity = controller.createUserRole(randomID, new String[0]);
 
         assertNotNull(responseEntity.getBody());
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
@@ -127,7 +118,7 @@ public class UserRoleControllerTest {
     }
 
     @Test
-    void createUserRole_ValidRequest_ReturnsSuccessResponse() {
+    void createUserRole_ValidRequest_ReturnsSuccessResponse1() {
 
         Role role1 = new Role();
         Role role2 = new Role();

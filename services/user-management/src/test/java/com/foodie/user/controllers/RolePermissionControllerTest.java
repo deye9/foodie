@@ -2,10 +2,6 @@ package com.foodie.user.controllers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -32,7 +28,6 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@ExtendWith({ TestSetupPostgres.class, MockitoExtension.class })
 class RolePermissionControllerTest {
 
     Role role;
@@ -40,16 +35,9 @@ class RolePermissionControllerTest {
     UUID randomID;
     String[] permissionIds;
 
-    @Mock
     private RoleService roleService;
-
-    @Mock
     private PermissionService permissionService;
-
-    @Mock
     private RolePermissionService rolePermissionService;
-
-    @InjectMocks
     private RolePermissionController controller;
 
     @BeforeEach
@@ -60,6 +48,12 @@ class RolePermissionControllerTest {
         roleId = UUID.randomUUID();
         role.setId(roleId);
         permissionIds = new String[] { UUID.randomUUID().toString(), UUID.randomUUID().toString() };
+
+        roleService = mock(RoleService.class);
+        permissionService = mock(PermissionService.class);
+        rolePermissionService = mock(RolePermissionService.class);
+
+        controller = new RolePermissionController(roleService, permissionService, rolePermissionService);
     }
 
     @Test

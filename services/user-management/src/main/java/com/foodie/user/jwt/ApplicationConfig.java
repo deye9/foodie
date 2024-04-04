@@ -14,7 +14,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.foodie.user.model.User;
 import com.foodie.user.repositories.UserRepository;
+import com.foodie.user.utils.FoodieUserDetails;
 
 @Configuration
 public class ApplicationConfig {
@@ -27,8 +29,11 @@ public class ApplicationConfig {
 
     @Bean
     UserDetailsService userDetailsService() {
-        return username -> repository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+        return username -> {
+            User user = repository.findByEmail(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+            return FoodieUserDetails.fromUserEntityToCustomUserDetails(user);
+        };
     }
 
     @Bean
@@ -45,7 +50,7 @@ public class ApplicationConfig {
     }
 
     @Bean
-    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
@@ -53,5 +58,5 @@ public class ApplicationConfig {
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
 }
